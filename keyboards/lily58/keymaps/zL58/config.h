@@ -15,3 +15,6 @@
 
 /*  HARDWARE OPTIONS */
 #define USE_I2C
+
+/* MOUSE OPTIONS */
+#define MOUSEKEY_MAX_SPEED 5
