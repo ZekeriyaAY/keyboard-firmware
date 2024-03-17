@@ -4,18 +4,9 @@ QMK firmware keyboard/keymap files I customized
 
 ## Lily58
 
-![lily58/zl58](imgur.com image replace me!)
+![zL58/lily58_zl58.png](zL58-handwiring.png)
 
 * **Hardware Supported:** Arduino Pro Micro(atmega32u4)
-* **Hardware Availability:** *Links to where you can find this hardware*
-
-Make example for this keyboard (after setting up your build environment):
-
-    make lily58/zl58:zL58
-
-Flashing example for this keyboard:
-
-    make lily58/zl58:zL58:flash
 
 ### Flash zL58 QMK Firmware
 
@@ -28,7 +19,6 @@ Flashing example for this keyboard:
 ~/qmk_firmware/keyboards/lily58/
     |- zl58/
         |- info.json
-        |- readme.md
         |- rules.mk
     |- keymaps/
         |- zL58/
@@ -41,6 +31,8 @@ Flashing example for this keyboard:
 
 ```bash
 qmk flash -kb lily58/zl58 -km zL58 -c
+
+
 ```
 
 Enter the bootloader in 4 ways:
