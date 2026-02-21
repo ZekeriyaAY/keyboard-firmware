@@ -13,6 +13,8 @@ enum custom_keycodes {
   CK_DQUO = SAFE_RANGE, // " — Mac: KC_NUBS, Win: KC_GRV
   CK_LABK,              // < — Mac: KC_GRV,  Win: KC_NUBS
   CK_RABK,              // > — Mac: S(KC_GRV), Win: S(KC_NUBS)
+  CK_WHLU,              // Scroll up — Mac: MS_WHLD (natural), Win: MS_WHLU
+  CK_WHLD,              // Scroll down — Mac: MS_WHLU (natural), Win: MS_WHLD
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -45,9 +47,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      | PREV | PLAY | NEXT |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      | MUTE | VOLD | VOLU |      |-------.    ,-------|MS_LF |MS_DW |MS_UP |MS_RT |      |      |
+ * |      |      | MUTE | VOLD | VOLU |      |-------.    ,-------|      |      |      |      |      |      |
  * |------+------+------+------+------+------|  F11  |    |  F12  |------+------+------+------+------+------|
- * |      |      |      | BRID | BRIU |      |-------|    |-------|      |WH_DW |WH_UP |      |      |      |
+ * |      |      |      | BRID | BRIU |      |-------|    |-------|      |      |      |      |      |      |
  * `-----------------------------------------/       /     \      \-----------------------------------------'
  *                   | LAlt | LGUI |LOWER | / Space /       \Enter \  |RAISE |BackSP| DEL  |
  *                   |      |      |      |/       /         \      \ |      |      |      |
@@ -56,15 +58,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_LOWER] = LAYOUT(
   CK_DQUO, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
   _______, _______, KC_MPRV, KC_MPLY, KC_MNXT, _______,                   _______, _______, _______, _______, _______, _______,
-  _______, _______, KC_MUTE, KC_VOLD, KC_VOLU, _______,                   MS_LEFT, MS_DOWN, MS_UP,   MS_RGHT, _______, _______,
-  _______, _______, _______, KC_BRID, KC_BRIU, _______, KC_F11,  KC_F12,  _______, MS_WHLD, MS_WHLU, _______, _______, _______,
+  _______, _______, KC_MUTE, KC_VOLD, KC_VOLU, _______,                   _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, KC_BRID, KC_BRIU, _______, KC_F11,  KC_F12,  _______, _______, _______, _______, _______, _______,
                              _______, _______, _______, _______, _______, _______, _______, _______
 ),
 /* RAISE
  * ,-----------------------------------------.                    ,-----------------------------------------.
  * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
- * |      |      |      |      |      |      |                    |      |      |      |      |      |      |
+ * |      |      |      |      |      |      |                    |MS_LF |MS_DW |MS_UP |MS_RT |      |      |
  * |------+------+------+------+------+------|                    |------+------+------+------+------+------|
  * |      |      |      |      |      |      |-------.    ,-------| Left | Down |  Up  | Right|      |      |
  * |------+------+------+------+------+------|   <   |    |   >   |------+------+------+------+------+------|
@@ -77,9 +79,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 [_RAISE] = LAYOUT(
   _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
-  _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
+  _______, _______, _______, _______, _______, _______,                   MS_LEFT, MS_DOWN, MS_UP,   MS_RGHT, _______, _______,
   _______, _______, _______, _______, _______, _______,                   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, _______,
-  _______, _______, _______, _______, _______, _______, CK_LABK, CK_RABK, _______, MS_WHLD, MS_WHLU, _______, _______, _______,
+  _______, _______, _______, _______, _______, _______, CK_LABK, CK_RABK, _______, CK_WHLD, CK_WHLU, _______, _______, _______,
                              _______, _______, _______, _______, _______, _______, _______, _______
 ),
 /* ADJUST (LOWER + RAISE)
@@ -137,6 +139,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
         }
+        case CK_WHLU: // scroll up (Mac natural: inverted)
+            if (record->event.pressed) {
+                register_code16(is_mac ? MS_WHLD : MS_WHLU);
+            } else {
+                unregister_code16(is_mac ? MS_WHLD : MS_WHLU);
+            }
+            return false;
+        case CK_WHLD: // scroll down (Mac natural: inverted)
+            if (record->event.pressed) {
+                register_code16(is_mac ? MS_WHLU : MS_WHLD);
+            } else {
+                unregister_code16(is_mac ? MS_WHLU : MS_WHLD);
+            }
+            return false;
     }
     return true;
 }
