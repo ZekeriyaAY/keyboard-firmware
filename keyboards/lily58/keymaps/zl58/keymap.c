@@ -9,6 +9,12 @@ enum layer_number {
   _ADJUST,
 };
 
+enum custom_keycodes {
+  CK_DQUO = SAFE_RANGE, // " — Mac: KC_NUBS, Win: KC_GRV
+  CK_LABK,              // < — Mac: KC_GRV,  Win: KC_NUBS
+  CK_RABK,              // > — Mac: S(KC_GRV), Win: S(KC_NUBS)
+};
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* QWERTY
@@ -48,7 +54,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  *                   `----------------------------'           '------''--------------------'
  */
 [_LOWER] = LAYOUT(
-  KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
+  CK_DQUO, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  _______,
   _______, _______, KC_MPRV, KC_MPLY, KC_MNXT, _______,                   _______, _______, _______, _______, _______, _______,
   _______, _______, KC_MUTE, KC_VOLD, KC_VOLU, _______,                   MS_LEFT, MS_DOWN, MS_UP,   MS_RGHT, _______, _______,
   _______, _______, _______, KC_BRID, KC_BRIU, _______, KC_F11,  KC_F12,  _______, MS_WHLD, MS_WHLU, _______, _______, _______,
@@ -73,7 +79,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
   _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
   _______, _______, _______, _______, _______, _______,                   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, _______,
-  _______, _______, _______, _______, _______, _______, TR_LABK, TR_RABK, _______, MS_WHLD, MS_WHLU, _______, _______, _______,
+  _______, _______, _______, _______, _______, _______, CK_LABK, CK_RABK, _______, MS_WHLD, MS_WHLU, _______, _______, _______,
                              _______, _______, _______, _______, _______, _______, _______, _______
 ),
 /* ADJUST (LOWER + RAISE)
@@ -101,6 +107,38 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 layer_state_t layer_state_set_user(layer_state_t state) {
   return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    bool is_mac = (detected_host_os() == OS_MACOS || detected_host_os() == OS_IOS);
+    switch (keycode) {
+        case CK_DQUO: // "
+            if (record->event.pressed) {
+                register_code(is_mac ? KC_NUBS : KC_GRV);
+            } else {
+                unregister_code(is_mac ? KC_NUBS : KC_GRV);
+            }
+            return false;
+        case CK_LABK: // <
+            if (record->event.pressed) {
+                register_code(is_mac ? KC_GRV : KC_NUBS);
+            } else {
+                unregister_code(is_mac ? KC_GRV : KC_NUBS);
+            }
+            return false;
+        case CK_RABK: { // >
+            uint16_t kc = is_mac ? KC_GRV : KC_NUBS;
+            if (record->event.pressed) {
+                register_code(KC_LSFT);
+                register_code(kc);
+            } else {
+                unregister_code(kc);
+                unregister_code(KC_LSFT);
+            }
+            return false;
+        }
+    }
+    return true;
 }
 
 bool process_detected_host_os_user(os_variant_t detected_os) {
