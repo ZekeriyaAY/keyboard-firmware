@@ -43,6 +43,9 @@ echo "Running userspace doctor..."
 qmk userspace-doctor
 
 echo ""
-echo "Setup complete! You can now run:"
-echo "  qmk userspace-compile              # compile all keyboards"
-echo "  qmk flash -kb lily58/zl58 -km zl58 -c # compile + flash zL58"
+echo "Compiling all keyboards..."
+qmk userspace-compile
+
+echo ""
+echo "Setup complete! To flash:"
+echo "  qmk flash -kb lily58/zl58 -km zl58 -c"
