@@ -11,9 +11,6 @@ cd keyboard-firmware
 
 # Run setup (installs QMK CLI if needed, configures overlay)
 ./setup.sh
-
-# Compile all keyboards
-qmk userspace-compile
 ```
 
 ## Build & Flash
